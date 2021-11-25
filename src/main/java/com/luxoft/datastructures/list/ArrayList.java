@@ -5,25 +5,25 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class ArrayList implements List {
-    private Object array[];
+public class ArrayList<T> implements List<T> {
+    private T[] array;
     private int size;
 
     public ArrayList() {
-        array = new Object[10];
+        array = (T[]) new Object[10];
     }
 
     public ArrayList(int initialCapacity) {
-        array = new Object[initialCapacity];
+        array = (T[]) new Object[initialCapacity];
     }
 
     @Override
-    public void add(Object value) {
+    public void add(T value) {
         add(value, size);
     }
 
     @Override
-    public void add(Object value, int index) {
+    public void add(T value, int index) {
         checkIndexOnAdd(index);
         ensureCapacity();
         for (int i = size - 1; i > index - 1; i--) {
@@ -34,9 +34,9 @@ public class ArrayList implements List {
     }
 
     @Override
-    public Object remove(int index) {
+    public T remove(int index) {
         checkIndex(index);
-        Object oldValue = array[index];
+        T oldValue = array[index];
         for (int i = index; i < size - 1; i++) {
             array[i] = array[i + 1];
         }
@@ -46,15 +46,15 @@ public class ArrayList implements List {
     }
 
     @Override
-    public Object get(int index) {
+    public T get(int index) {
         checkIndex(index);
         return array[index];
     }
 
     @Override
-    public Object set(Object value, int index) {
+    public T set(T value, int index) {
         checkIndex(index);
-        Object oldValue = array[index];
+        T oldValue = array[index];
         array[index] = value;
         return oldValue;
     }
@@ -78,7 +78,7 @@ public class ArrayList implements List {
     }
 
     @Override
-    public boolean contains(Object value) {
+    public boolean contains(T value) {
         for (int i = 0; i < size; i++) {
             if (value.equals(array[i])) {
                 return true;
@@ -88,7 +88,7 @@ public class ArrayList implements List {
     }
 
     @Override
-    public int indexOf(Object value) {
+    public int indexOf(T value) {
         checkOnNull(value);
         for (int i = 0; i < size; i++) {
             if (Objects.equals(array[i], value)) {
@@ -99,7 +99,7 @@ public class ArrayList implements List {
     }
 
     @Override
-    public int lastIndexOf(Object value) {
+    public int lastIndexOf(T value) {
         checkOnNull(value);
         for (int i = size - 1; i > -1; i--) {
             if (Objects.equals(array[i], value)) {
@@ -121,7 +121,7 @@ public class ArrayList implements List {
 
     private void ensureCapacity() {
         if (array.length == size) {
-            Object[] newArray = new Object[(int) (array.length * 1.5) + 1];
+            T[] newArray = (T[]) new Object[(int) (array.length * 1.5) + 1];
             for (int i = 0; i < array.length; i++) {
                 newArray[i] = array[i];
             }
@@ -129,7 +129,7 @@ public class ArrayList implements List {
         }
     }
 
-    private void checkOnNull(Object value) {
+    private void checkOnNull(T value) {
         if (value == null) {
             throw new NullPointerException("");
         }
@@ -151,7 +151,7 @@ public class ArrayList implements List {
         return new ListIterator();
     }
 
-    private class ListIterator implements Iterator {
+    private class ListIterator implements Iterator<T> {
         private int counter = -1;
         private boolean isRemovable = false;
 
@@ -161,7 +161,7 @@ public class ArrayList implements List {
         }
 
         @Override
-        public Object next() {
+        public T next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }

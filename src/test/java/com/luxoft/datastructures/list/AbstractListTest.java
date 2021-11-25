@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractListTest {
-    private List list;
+    private List<String> list;
 
     @BeforeEach
     public void before() {
         list = getList();
     }
 
-    protected abstract List getList();
+    protected abstract List<String> getList();
 
     @Test
     public void testCheckForAddingToTopOfList() {

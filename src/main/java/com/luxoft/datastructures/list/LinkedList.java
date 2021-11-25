@@ -1,13 +1,12 @@
 package com.luxoft.datastructures.list;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class LinkedList implements List {
-    private Node head;
-    private Node tail;
+public class LinkedList<T> implements List<T> {
+    private Node<T> head;
+    private Node<T> tail;
     private int size = 0;
 
     public LinkedList() {
@@ -15,15 +14,15 @@ public class LinkedList implements List {
     }
 
     @Override
-    public void add(Object value) {
+    public void add(T value) {
         add(value, size);
     }
 
     @Override
-    public void add(Object value, int index) {
-        Node newNode = new Node(value);
+    public void add(T value, int index) {
+        Node<T> newNode = new Node<T>(value);
         checkIndexOnAdd(index);
-        Node currentNode = getNode(index);
+        Node<T> currentNode = getNode(index);
         if (head == null) {
             head = tail = newNode;
         } else if (index == 0) {
@@ -44,9 +43,9 @@ public class LinkedList implements List {
     }
 
     @Override
-    public Object remove(int index) {
+    public T remove(int index) {
         checkIndex(index);
-        Object oldValue = null;
+        T oldValue = null;
         IteratorList newIterator = new IteratorList();
         int counter = 0;
         if (index == counter) {
@@ -67,17 +66,16 @@ public class LinkedList implements List {
     }
 
     @Override
-    public Object get(int index) {
+    public T get(int index) {
         checkIndex(index);
-        Node currentNode = getNode(index);
-        return currentNode.value;
+        return getNode(index).value;
     }
 
     @Override
-    public Object set(Object value, int index) {
+    public T set(T value, int index) {
         checkIndex(index);
-        Node currentNode = getNode(index);
-        Object oldValue = currentNode.value;
+        Node<T> currentNode = getNode(index);
+        T oldValue = currentNode.value;
         currentNode.value = value;
         return oldValue;
     }
@@ -117,7 +115,7 @@ public class LinkedList implements List {
     }
 
     @Override
-    public int indexOf(Object value) {
+    public int indexOf(T value) {
         checkOnNull(value);
         int result = -1;
         if (size != 0) {
@@ -140,11 +138,11 @@ public class LinkedList implements List {
     }
 
     @Override
-    public int lastIndexOf(Object value) {
+    public int lastIndexOf(T value) {
         checkOnNull(value);
         int result = -1;
         if (size != 0) {
-            Node currentTail = tail;
+            Node<T> currentTail = tail;
             int counter = size - 1;
             while (counter >= 0) {
                 if (Objects.equals(currentTail.value, value)) {
@@ -172,8 +170,8 @@ public class LinkedList implements List {
         return result.toString();
     }
 
-    private Node getNode(int index) {
-        Node result = null;
+    private Node<T> getNode(int index) {
+        Node<T> result = null;
         IteratorList newIterator = new IteratorList();
         if (index == 0) {
             result = head;
@@ -191,7 +189,7 @@ public class LinkedList implements List {
             }
         } else {
             int counter = size - 1;
-            Node currentTail = tail;
+            Node<T> currentTail = tail;
             while (counter >= 0) {
                 currentTail = currentTail.prev;
                 counter--;
@@ -204,10 +202,9 @@ public class LinkedList implements List {
         return result;
     }
 
-    private class IteratorList implements Iterator {
+    private class IteratorList implements Iterator<T> {
         private int index = -1;
-        private Node newHead = head;
-        private Node newTail = tail;
+        private Node<T> newHead = head;
 
         @Override
         public boolean hasNext() {
@@ -218,7 +215,7 @@ public class LinkedList implements List {
         }
 
         @Override
-        public Object next() {
+        public T next() {
             newHead = newHead.next;
             index++;
             return newHead.value;
@@ -226,13 +223,12 @@ public class LinkedList implements List {
 
         @Override
         public void remove() {
-            Object oldValue = newHead.value;
             if (newHead.prev == null & newHead.next == null) {
                 head = tail = null;
             } else if (newHead.prev == null & newHead.next != null) {
                 newHead.next.prev = null;
                 head = newHead.next;
-            } else if (newHead.prev != null & newHead.next == null) {
+            } else if (newHead.next == null) {
                 newHead.prev.next = null;
                 head = newHead.prev;
                 tail = newHead.prev;
@@ -261,12 +257,12 @@ public class LinkedList implements List {
         }
     }
 
-    class Node {
-        Object value;
-        Node next;
-        Node prev;
+    static class  Node<T> {
+        T value;
+        Node<T> next;
+        Node<T> prev;
 
-        public Node(Object value) {
+        public Node(T value) {
             this.value = value;
         }
 

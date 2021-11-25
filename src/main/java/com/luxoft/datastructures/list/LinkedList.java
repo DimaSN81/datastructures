@@ -23,49 +23,22 @@ public class LinkedList implements List {
     public void add(Object value, int index) {
         Node newNode = new Node(value);
         checkIndexOnAdd(index);
-        IteratorList newIterator = new IteratorList();
-        if (size == 0) {
+        Node currentNode = getNode(index);
+        if (head == null) {
             head = tail = newNode;
-        } else if ((int) (size / 2) - 1 >= index) {
-            int counter = 0;
-            if (index == counter) {
-                newNode.prev = null;
-                newNode.next = head;
-                head.prev = newNode;
-                head = newNode;
-            } else {
-                while (newIterator.hasNext()) {
-                    newIterator.next();
-                    counter++;
-                    if (counter == index) {
-                        newNode.prev = newIterator.newHead.prev;
-                        newNode.next = newIterator.newHead;
-                        newIterator.newHead.prev = newNode;
-                        break;
-                    }
-                }
-            }
+        } else if (index == 0) {
+            newNode.next = head;
+            head.prev = newNode;
+            head = newNode;
+        } else if (currentNode == null) {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
         } else {
-            int counter = size;
-            if (size == index) {
-                tail.next = newNode;
-                newNode.prev = tail;
-                newNode.next = null;
-                tail = newNode;
-            } else {
-                Node currentTail = tail;
-                while (counter > 0) {
-                    counter--;
-                    if (counter == index) {
-                        newNode.prev = currentTail.prev;
-                        newNode.next = currentTail;
-                        currentTail.prev.next = newNode;
-                        currentTail.prev = newNode;
-                        break;
-                    }
-                    currentTail = currentTail.prev;
-                }
-            }
+            newNode.prev = currentNode.prev;
+            newNode.next = currentNode;
+            currentNode.prev.next = newNode;
+            currentNode.prev = newNode;
         }
         size++;
     }
@@ -95,73 +68,17 @@ public class LinkedList implements List {
 
     @Override
     public Object get(int index) {
-        Object result = null;
         checkIndex(index);
-        IteratorList newIterator = new IteratorList();
-        if (index == 0) {
-            result = head.value;
-        } else if (index == size - 1) {
-            result = tail.value;
-        } else if ((int) (size / 2) - 1 >= index) {
-            int counter = 0;
-            while (newIterator.hasNext()) {
-                newIterator.next();
-                counter++;
-                if (counter == index) {
-                    result = newIterator.newHead.value;
-                    break;
-                }
-            }
-        } else {
-            int counter = size - 1;
-            Node currentTail = tail;
-            while (counter >= 0) {
-                currentTail = currentTail.prev;
-                counter--;
-                if (counter == index) {
-                    result = currentTail.value;
-                    break;
-                }
-            }
-        }
-        return result;
+        Node currentNode = getNode(index);
+        return currentNode.value;
     }
 
     @Override
     public Object set(Object value, int index) {
         checkIndex(index);
-        Object oldValue = null;
-        IteratorList newIterator = new IteratorList();
-        if (index == 0) {
-            oldValue = head.value;
-            head.value = value;
-        } else if (index == size - 1) {
-            oldValue = tail.value;
-            tail.value = value;
-        } else if ((int) (size / 2) - 1 >= index) {
-            int counter = 0;
-            while (newIterator.hasNext()) {
-                newIterator.next();
-                counter++;
-                if (counter == index) {
-                    oldValue = newIterator.newHead.value;
-                    newIterator.newHead.value = value;
-                    break;
-                }
-            }
-        } else {
-            int counter = size - 1;
-            Node currentTail = tail;
-            while (counter >= 0) {
-                currentTail = currentTail.prev;
-                counter--;
-                if (counter == index) {
-                    oldValue = currentTail.value;
-                    currentTail.value = value;
-                    break;
-                }
-            }
-        }
+        Node currentNode = getNode(index);
+        Object oldValue = currentNode.value;
+        currentNode.value = value;
         return oldValue;
     }
 
@@ -184,13 +101,13 @@ public class LinkedList implements List {
     @Override
     public boolean contains(Object value) {
         boolean result = false;
-        if (head.equals(value)) {
+        if (Objects.equals(head.value, value)) {
             result = true;
         } else {
             IteratorList iteratorList = new IteratorList();
             while (iteratorList.hasNext()) {
                 iteratorList.next();
-                if (iteratorList.newHead.value.equals(value)) {
+                if (Objects.equals(iteratorList.newHead.value, value)) {
                     result = true;
                     break;
                 }
@@ -253,6 +170,38 @@ public class LinkedList implements List {
             }
         }
         return result.toString();
+    }
+
+    private Node getNode(int index) {
+        Node result = null;
+        IteratorList newIterator = new IteratorList();
+        if (index == 0) {
+            result = head;
+        } else if (index == size - 1) {
+            result = tail;
+        } else if ((int) (size / 2) - 1 >= index) {
+            int counter = 0;
+            while (newIterator.hasNext()) {
+                newIterator.next();
+                counter++;
+                if (counter == index) {
+                    result = newIterator.newHead;
+                    break;
+                }
+            }
+        } else {
+            int counter = size - 1;
+            Node currentTail = tail;
+            while (counter >= 0) {
+                currentTail = currentTail.prev;
+                counter--;
+                if (counter == index) {
+                    result = currentTail;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     private class IteratorList implements Iterator {
